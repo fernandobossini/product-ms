@@ -45,10 +45,8 @@ public class ProductRepositoryImpl implements ProductRepositoryQuery {
 			predicates.add(builder.lessThanOrEqualTo(root.get("price").as(BigDecimal.class), productFilter.getMaxPrice()));
 		}
 				
-		criteria.where(predicates.toArray(new Predicate[predicates.size()]));
-		
-		TypedQuery<Product> query = manager.createQuery(criteria);
-		
+		criteria.where(predicates.toArray(new Predicate[predicates.size()]));		
+		TypedQuery<Product> query = manager.createQuery(criteria);		
 		return query.getResultList();
 	}	
 }

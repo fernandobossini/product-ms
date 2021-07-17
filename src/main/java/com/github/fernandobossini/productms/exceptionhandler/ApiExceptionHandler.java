@@ -15,7 +15,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -24,34 +23,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,	                                                               
 			HttpHeaders headers, HttpStatus status, WebRequest request) {	
 		String message = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
-		Error error = new Error(status.value(), message);
+		Error error = new Error(HttpStatus.BAD_REQUEST.value(), message);
 		return handleExceptionInternal(ex, error, headers, HttpStatus.BAD_REQUEST, request);
 	}
 	
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, 
 			HttpHeaders headers, HttpStatus status, WebRequest request) {		
-		Error error = new Error(status.value(), createStringError(ex.getBindingResult()));
+		Error error = new Error(HttpStatus.BAD_REQUEST.value(), createStringError(ex.getBindingResult()));
 		return handleExceptionInternal(ex, error, headers, HttpStatus.BAD_REQUEST, request);
 	}
-	
-	/*
-	@ExceptionHandler({ EmptyResultDataAccessException.class })
-	public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex, WebRequest request) {
-		String mensagemUsuario = messageSource.getMessage("recurso.nao-encontrado", null, LocaleContextHolder.getLocale());
-		String mensagemDesenvolvedor = ex.toString();
-		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
-		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
-	}
-	
-	@ExceptionHandler({ DataIntegrityViolationException.class } )
-	public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
-		String mensagemUsuario = messageSource.getMessage("recurso.operacao-nao-permitida", null, LocaleContextHolder.getLocale());
-		String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
-		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
-		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-	}*/
-	
+		
 	private String createStringError(BindingResult bindingResult) {
 		List<ObjectError> listObjectError = bindingResult.getAllErrors();
 		
@@ -63,12 +45,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		return message;
 	}
 	
-	@JsonPropertyOrder({ "statusCode", "message" })
 	public static class Error {
 
 		@JsonProperty("status_code")
 		private Integer statusCode;
 		
+		@JsonProperty("message")
 		private String message;
 
 		public Error(Integer statusCode, String message) {

@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -26,16 +27,16 @@ public class Product implements Serializable {
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long id;
 
-	@NotNull(message = "Nome não informado")
+	@NotBlank(message = "O nome não foi informado")
 	@Column(name = "name", nullable = false)
 	private String name;
 	
-	@NotNull(message = "Descrição não informada")
+	@NotBlank(message = "A descrição não foi informada")
 	@Column(name = "description", nullable = false)
 	private String description;	
 	
-	@DecimalMin(value = "0.0", message = "Preço deve ter valor positivo", inclusive = true)
-	@NotNull(message = "Preço não informado")
+	@DecimalMin(value = "0.0", message = "O preço deve ter valor positivo", inclusive = false)
+	@NotNull(message = "O preço não pode ser nulo")
 	@Column(name = "price", nullable = false)
 	private BigDecimal price;
 	
